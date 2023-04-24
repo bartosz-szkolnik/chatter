@@ -37,7 +37,7 @@ export const loader = async ({ request }: LoaderArgs) => {
 
 export default function App() {
   const { env, session } = useLoaderData<typeof loader>();
-  const revalidator = useRevalidator();
+  const { revalidate } = useRevalidator();
 
   const [supabase] = useState(() => createBrowserClient<Database>(env.SUPABASE_URL, env.SUPABASE_ANON_KEY));
 
@@ -50,15 +50,14 @@ export default function App() {
     } = supabase.auth.onAuthStateChange((event, session) => {
       console.log('test');
       if (session?.access_token !== serverAccessToken) {
-        // this creates an infinite loop...
-        // revalidator.revalidate();
+        revalidate();
       }
     });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, [supabase, serverAccessToken, revalidator]);
+  }, [supabase, serverAccessToken, revalidate]);
 
   return (
     <html lang="en">

@@ -18,10 +18,7 @@ export default function RealtimeMessages({ serverMessages }: Props) {
     const channel = supabase
       .channel('*')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
-        // this thing does not work!
-        console.log(payload);
         const newMessage = payload.new as Message;
-
         if (!messages.find(message => message.id === newMessage.id)) {
           setMessages([...messages, newMessage]);
         }
